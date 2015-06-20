@@ -17,10 +17,10 @@
 		"grunt-contrib-clean": "0.6.0",
 		"grunt-contrib-compress": "0.13.0",
 		"grunt-contrib-copy": "0.8.0",
-		"grunt-contrib-jshint": "0.11.0",
-		"grunt-contrib-less": "1.0.0",
+		"grunt-contrib-jshint": "0.11.2",
+		"grunt-contrib-less": "1.0.1",
 		"grunt-contrib-requirejs": "0.4.4",
-		"grunt-contrib-uglify": "0.8.0",
+		"grunt-contrib-uglify": "0.9.1",
 		"grunt-contrib-watch": "0.6.1",
 		"grunt-shell": "1.1.2",
 		"grunt-template": "0.2.3",
@@ -29,7 +29,8 @@
 		"q": "1.2.0",
 		"q-io": "1.12.0",
 		"chrome-remote-interface": "0.7.0",
-		"node-webkit-builder": "bastimeyer/node-webkit-builder#runApp-appstart-event"
+		"node-webkit-builder": "bastimeyer/node-webkit-builder#runApp-appstart-event",
+		"babel-core": "5.5.8"
 	},
 
 	"config": {

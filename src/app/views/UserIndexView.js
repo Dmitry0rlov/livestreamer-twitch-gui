@@ -1,25 +1,22 @@
-define([
-	"Ember",
-	"text!templates/user/index.html.hbs"
-], function( Ember, template ) {
+import Ember from "Ember";
+import template from "text!templates/user/index.html.hbs";
 
-	var set = Ember.set;
+var set = Ember.set;
 
-	return Ember.View.extend({
-		template: Ember.HTMLBars.compile( template ),
-		tagName: "main",
-		classNames: [ "content", "content-user", "content-user-index" ],
 
-		showTokenForm: false,
+export default Ember.View.extend({
+	template: Ember.HTMLBars.compile( template ),
+	tagName: "main",
+	classNames: [ "content", "content-user", "content-user-index" ],
 
-		actions: {
-			"showTokenForm": function() {
-				set( this, "showTokenForm", true );
-				Ember.run.next( this, function() {
-					this.$( "input" ).focus();
-				});
-			}
+	showTokenForm: false,
+
+	actions: {
+		"showTokenForm": function() {
+			set( this, "showTokenForm", true );
+			Ember.run.next( this, function() {
+				this.$( "input" ).focus();
+			});
 		}
-	});
-
+	}
 });

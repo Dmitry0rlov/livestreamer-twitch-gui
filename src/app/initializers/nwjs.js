@@ -1,148 +1,135 @@
-define([
-	"Ember",
-	"nwjs/nwGui",
-	"nwjs/nwWindow",
-	"nwjs/nwScreen",
-	"nwjs/shortcut",
-	"nwjs/tray",
-	"nwjs/menu",
-	"utils/contains"
-], function(
-	Ember,
-	nwGui,
-	nwWindow,
-	nwScreen,
-	shortcut,
-	tray,
-	menu,
-	contains
-) {
+import Ember from "Ember";
+import nwGui from "nwjs/nwGui";
+import nwWindow from "nwjs/nwWindow";
+import nwScreen from "nwjs/nwScreen";
+import { createAppShortcut } from "nwjs/shortcut";
+import tray from "nwjs/tray";
+import { createMacNativeMenuBar } from "nwjs/menu";
+import { containsSome } from "utils/contains";
 
-	var get = Ember.get;
+var get = Ember.get;
 
-	window.addEventListener( "beforeunload", function() {
-		// remove all listeners
-		nwWindow.removeAllListeners();
-		nwScreen.removeAllListeners();
-		process.removeAllListeners();
-		// prevent tray icons from stacking up when refreshing the page or devtools
-		tray.remove();
-	}, false );
+window.addEventListener( "beforeunload", function() {
+	// remove all listeners
+	nwWindow.removeAllListeners();
+	nwScreen.removeAllListeners();
+	process.removeAllListeners();
+	// prevent tray icons from stacking up when refreshing the page or devtools
+	tray.remove();
+}, false );
 
 
-	var isHidden    = true;
-	var isMaximized = false;
-	var isMinimized = false;
+var isHidden    = true;
+var isMaximized = false;
+var isMinimized = false;
 
-	nwWindow.on( "maximize",   function onMaximize()   { isMaximized = true;  } );
-	nwWindow.on( "unmaximize", function onUnmaximize() { isMaximized = false; } );
-	nwWindow.on( "minimize",   function onMinimize()   { isMinimized = true;  } );
-	nwWindow.on( "restore",    function onRestore()    { isMinimized = false; } );
+nwWindow.on( "maximize",   function onMaximize()   { isMaximized = true;  } );
+nwWindow.on( "unmaximize", function onUnmaximize() { isMaximized = false; } );
+nwWindow.on( "minimize",   function onMinimize()   { isMinimized = true;  } );
+nwWindow.on( "restore",    function onRestore()    { isMinimized = false; } );
 
 
-	nwWindow.on( "ready", function onReady( settings ) {
-		// taskbar and tray OS integrations
-		function onIntegrationChange() {
-			var taskbar = get( settings, "isVisibleInTaskbar" );
-			var tray    = get( settings, "isVisibleInTray" );
-			nwWindow.setShowInTaskbar( taskbar );
-			nwWindow.setShowInTray( tray, taskbar );
+nwWindow.on( "ready", function onReady( settings ) {
+	// taskbar and tray OS integrations
+	function onIntegrationChange() {
+		var taskbar = get( settings, "isVisibleInTaskbar" );
+		var tray    = get( settings, "isVisibleInTray" );
+		nwWindow.setShowInTaskbar( taskbar );
+		nwWindow.setShowInTray( tray, taskbar );
+	}
+	// observe the settings record
+	Ember.addObserver( settings, "gui_integration", onIntegrationChange );
+	onIntegrationChange();
+
+
+	// parse process arguments
+	var argv = nwGui.App.fullArgv;
+
+	// hide in tray
+	if ( containsSome.call( argv, "--tray", "--hide", "--hidden" ) ) {
+		nwWindow.setShowInTray( true, get( settings, "isVisibleInTaskbar" ) );
+		// remove the tray icon after clicking it if it's disabled in the settings
+		if ( !get( settings, "isVisibleInTray" ) ) {
+			tray.tray.once( "click", tray.remove.bind( tray ) );
 		}
-		// observe the settings record
-		Ember.addObserver( settings, "gui_integration", onIntegrationChange );
-		onIntegrationChange();
+	} else {
+		nwWindow.toggleVisibility( true );
+	}
+
+	// minimize window
+	if ( containsSome.call( argv, "--min", "--minimize", "--minimized" ) ) {
+		nwWindow.toggleMinimize( false );
+	}
+
+	if ( DEBUG ) {
+		window.initialized = true;
+	}
+});
 
 
-		// parse process arguments
-		var argv = nwGui.App.fullArgv;
+nwWindow.toggleMaximize = function toggleMaximize( bool ) {
+	if ( bool === undefined ) { bool = isMaximized; }
+	nwWindow[ bool ? "unmaximize" : "maximize" ]();
+};
 
-		// hide in tray
-		if ( contains.some.call( argv, "--tray", "--hide", "--hidden" ) ) {
-			nwWindow.setShowInTray( true, get( settings, "isVisibleInTaskbar" ) );
-			// remove the tray icon after clicking it if it's disabled in the settings
-			if ( !get( settings, "isVisibleInTray" ) ) {
-				tray.tray.once( "click", tray.remove.bind( tray ) );
+nwWindow.toggleMinimize = function toggleMinimize( bool ) {
+	if ( bool === undefined ) { bool = isMinimized; }
+	nwWindow[ bool ? "restore" : "minimize" ]();
+};
+
+nwWindow.toggleVisibility = function toggleVisibility( bool ) {
+	if ( bool === undefined ) { bool = isHidden; }
+	nwWindow[ bool ? "show" : "hide" ]();
+	isHidden = !bool;
+};
+
+
+nwWindow.setShowInTray = function setShowInTray( bool, taskbar ) {
+	// always remove the tray icon...
+	// we need a new click event listener in case the taskbar param has changed
+	tray.remove();
+	if ( bool ) {
+		tray.add(function() {
+			nwWindow.toggleVisibility();
+			// also toggle taskbar visiblity on click (gui_integration === both)
+			if ( taskbar ) {
+				nwWindow.setShowInTaskbar( !isHidden );
 			}
-		} else {
-			nwWindow.toggleVisibility( true );
+		});
+	}
+};
+
+
+Ember.Application.initializer({
+	name: "nwjs",
+
+	initialize: function( container ) {
+		var metadata = container.lookup( "service:metadata" );
+
+		var displayName    = get( metadata, "config.display-name" );
+		var trayIconImg    = get( metadata, "config.tray-icon" );
+		var trayIconImgOSX = get( metadata, "config.tray-icon-osx" );
+
+		createAppShortcut( displayName );
+		tray.init( displayName, trayIconImg, trayIconImgOSX );
+		if ( process.platform === "darwin" ) {
+			createMacNativeMenuBar( displayName );
 		}
 
-		// minimize window
-		if ( contains.some.call( argv, "--min", "--minimize", "--minimized" ) ) {
-			nwWindow.toggleMinimize( false );
-		}
 
-		if ( DEBUG ) {
-			window.initialized = true;
-		}
-	});
-
-
-	nwWindow.toggleMaximize = function toggleMaximize( bool ) {
-		if ( bool === undefined ) { bool = isMaximized; }
-		nwWindow[ bool ? "unmaximize" : "maximize" ]();
-	};
-
-	nwWindow.toggleMinimize = function toggleMinimize( bool ) {
-		if ( bool === undefined ) { bool = isMinimized; }
-		nwWindow[ bool ? "restore" : "minimize" ]();
-	};
-
-	nwWindow.toggleVisibility = function toggleVisibility( bool ) {
-		if ( bool === undefined ) { bool = isHidden; }
-		nwWindow[ bool ? "show" : "hide" ]();
-		isHidden = !bool;
-	};
-
-
-	nwWindow.setShowInTray = function setShowInTray( bool, taskbar ) {
-		// always remove the tray icon...
-		// we need a new click event listener in case the taskbar param has changed
-		tray.remove();
-		if ( bool ) {
-			tray.add(function() {
-				nwWindow.toggleVisibility();
-				// also toggle taskbar visiblity on click (gui_integration === both)
-				if ( taskbar ) {
-					nwWindow.setShowInTaskbar( !isHidden );
-				}
-			});
-		}
-	};
-
-
-	Ember.Application.initializer({
-		name: "nwjs",
-
-		initialize: function( container ) {
-			var metadata = container.lookup( "service:metadata" );
-
-			var displayName    = get( metadata, "config.display-name" );
-			var trayIconImg    = get( metadata, "config.tray-icon" );
-			var trayIconImgOSX = get( metadata, "config.tray-icon-osx" );
-
-			shortcut.create( displayName );
-			tray.init( displayName, trayIconImg, trayIconImgOSX );
-			if ( process.platform === "darwin" ) {
-				menu.createMacNativeMenuBar( displayName );
+		// listen for the close event and show the dialog instead of strictly shutting down
+		nwWindow.on( "close", function() {
+			if ( location.pathname !== "/index.html" ) {
+				return nwWindow.close( true );
 			}
 
-
-			// listen for the close event and show the dialog instead of strictly shutting down
-			nwWindow.on( "close", function() {
-				if ( location.pathname !== "/index.html" ) {
-					return nwWindow.close( true );
-				}
-
-				try {
-					nwWindow.show();
-					nwWindow.focus();
-					container.lookup( "controller:application" ).send( "winClose" );
-				} catch ( e ) {
-					nwWindow.close( true );
-				}
-			});
-		}
-	});
-
+			try {
+				nwWindow.show();
+				nwWindow.focus();
+				container.lookup( "controller:application" ).send( "winClose" );
+			} catch ( e ) {
+				nwWindow.close( true );
+			}
+		});
+	}
 });

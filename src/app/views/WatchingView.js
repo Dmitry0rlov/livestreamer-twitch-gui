@@ -1,12 +1,9 @@
-define([
-	"Ember",
-	"text!templates/watching.html.hbs"
-], function( Ember, template ) {
+import Ember from "Ember";
+import template from "text!templates/watching.html.hbs";
 
-	return Ember.View.extend({
-		defaultTemplate: Ember.HTMLBars.compile( template ),
-		tagName: "main",
-		classNames: [ "content", "content-watching" ]
-	});
 
+export default Ember.View.extend({
+	template: Ember.HTMLBars.compile( template ),
+	tagName: "main",
+	classNames: [ "content", "content-watching" ]
 });

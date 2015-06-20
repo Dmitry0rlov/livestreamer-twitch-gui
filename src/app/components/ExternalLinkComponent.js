@@ -1,31 +1,30 @@
-define( [ "Ember" ], function( Ember ) {
+import Ember from "Ember";
 
-	var get = Ember.get;
+var get = Ember.get;
 
-	return Ember.Component.extend({
-		tagName: "a",
-		classNameBindings: [ ":external-link" ],
-		attributeBindings: [ "href" ],
 
-		href: "#",
+export default Ember.Component.extend({
+	tagName: "a",
+	classNameBindings: [ ":external-link" ],
+	attributeBindings: [ "href" ],
 
-		action: "openBrowser",
+	href: "#",
 
-		click: function( e ) {
-			e.preventDefault();
-			e.stopImmediatePropagation();
-			this.sendAction( "action", get( this, "url" ) );
-		},
+	action: "openBrowser",
 
-		didInsertElement: function() {
-			this._super.apply( this, arguments );
-			this.$().on( "click", function( e ) {
-				if ( e.button !== 0 ) {
-					e.preventDefault();
-					e.stopImmediatePropagation();
-				}
-			});
-		}
-	});
+	click: function( e ) {
+		e.preventDefault();
+		e.stopImmediatePropagation();
+		this.sendAction( "action", get( this, "url" ) );
+	},
 
+	didInsertElement: function() {
+		this._super.apply( this, arguments );
+		this.$().on( "click", function( e ) {
+			if ( e.button !== 0 ) {
+				e.preventDefault();
+				e.stopImmediatePropagation();
+			}
+		});
+	}
 });

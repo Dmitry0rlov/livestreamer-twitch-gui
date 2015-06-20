@@ -1,11 +1,8 @@
-define([
-	"Ember",
-	"text!templates/components/checkbox.html.hbs"
-], function( Ember, template ) {
+import Ember from "Ember";
+import layout from "text!templates/components/checkbox.html.hbs";
 
-	return Ember.Component.extend({
-		defaultLayout: Ember.HTMLBars.compile( template ),
-		tagName: "label"
-	});
 
+export default Ember.Component.extend({
+	defaultLayout: Ember.HTMLBars.compile( layout ),
+	tagName: "label"
 });

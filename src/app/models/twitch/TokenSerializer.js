@@ -1,20 +1,21 @@
-define( [ "store/TwitchSerializer" ], function( TwitchSerializer ) {
+import TwitchSerializer from "store/TwitchSerializer";
 
-	return TwitchSerializer.extend({
-		typeForRoot: function() {
-			return "twitchToken";
-		},
 
-		normalizePayload: function( payload ) {
-			return {
-				twitchToken: [ payload.token ]
-			};
-		},
+export default TwitchSerializer.extend({
 
-		normalize: function( type, hash ) {
-			hash.id = 1;
-			return hash;
-		}
-	});
+	typeForRoot: function() {
+		return "twitchToken";
+	},
+
+	normalizePayload: function( payload ) {
+		return {
+			twitchToken: [ payload.token ]
+		};
+	},
+
+	normalize: function( type, hash ) {
+		hash.id = 1;
+		return hash;
+	}
 
 });

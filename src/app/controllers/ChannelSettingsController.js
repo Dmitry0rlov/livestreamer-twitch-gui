@@ -1,124 +1,121 @@
-define([
-	"Ember",
-	"mixins/RetryTransitionMixin"
-], function( Ember, RetryTransitionMixin ) {
+import Ember from "Ember";
+import RetryTransitionMixin from "mixins/RetryTransitionMixin";
 
-	var get = Ember.get,
-	    set = Ember.set;
+var get = Ember.get;
+var set = Ember.set;
 
-	return Ember.Controller.extend( RetryTransitionMixin, {
-		modelObserver: function() {
-			var model    = get( this, "model" );
-			var settings = get( this, "settings" );
-			var original = get( model, "content" );
 
-			original.eachAttribute(function( attr, meta ) {
-				var customDefault = meta.options.defaultValue;
+export default Ember.Controller.extend( RetryTransitionMixin, {
+	modelObserver: function() {
+		var model    = get( this, "model" );
+		var settings = get( this, "settings" );
+		var original = get( model, "content" );
 
-				// proxy for setting the custom attr or getting the custom/global attr
-				var attributeProxy = Ember.computed(
-					"model." + attr,
-					"settings." + attr,
-					function( key, value, oldValue ) {
-						// old CP-setter syntax (as of ember 1.12.0)
-						if ( arguments.length > 1 ) {
-							// don't accept changes if disabled
-							// selectboxes without `null` options trigger property changes on insert
-							if ( !get( this, "_" + attr ) ) {
-								return oldValue;
-							}
-							set( model, attr, value );
-							return value;
-						} else {
-							// return the global value if the custom value is null
-							var val = get( model, attr );
-							return val === customDefault
-								? get( settings, attr )
-								: val;
+		original.eachAttribute(function( attr, meta ) {
+			var customDefault = meta.options.defaultValue;
+
+			// proxy for setting the custom attr or getting the custom/global attr
+			var attributeProxy = Ember.computed(
+				"model." + attr,
+				"settings." + attr,
+				function( key, value, oldValue ) {
+					// old CP-setter syntax (as of ember 1.12.0)
+					if ( arguments.length > 1 ) {
+						// don't accept changes if disabled
+						// selectboxes without `null` options trigger property changes on insert
+						if ( !get( this, "_" + attr ) ) {
+							return oldValue;
 						}
+						set( model, attr, value );
+						return value;
+					} else {
+						// return the global value if the custom value is null
+						var val = get( model, attr );
+						return val === customDefault
+							? get( settings, attr )
+							: val;
 					}
-				);
-
-				// computed property for enabling/disabling the custom attribute
-				var attributeEnabled = Ember.computed(
-					"model." + attr,
-					function( key, value ) {
-						// old CP-setter syntax (as of ember 1.12.0)
-						if ( arguments.length > 1 ) {
-							// false => set attr value to null (delete)
-							// true  => set attr value to global value (init)
-							value = !!value;
-							set( model, attr, value
-								? get( settings, attr )
-								: null
-							);
-							return value;
-						} else {
-							// false => use global attribute (default)
-							// true  => use custom attribute
-							return get( model, attr ) !== customDefault;
-						}
-					}
-				);
-
-				Ember.defineProperty( this,       attr, attributeProxy );
-				Ember.defineProperty( this, "_" + attr, attributeEnabled );
-			}, this );
-		}.observes( "model" ),
-
-		/**
-		 * Prevent pollution:
-		 * Destroy all records that don't have custom values set, otherwise just save it normally
-		 * @param record
-		 * @returns {Promise}
-		 */
-		saveRecord: function( record ) {
-			// check if the record has any values set
-			var isEmpty = true;
-			record.eachAttribute(function( attr, meta ) {
-				if ( get( record, attr ) !== meta.options.defaultValue ) {
-					isEmpty = false;
 				}
-			});
+			);
 
-			if ( !isEmpty ) {
-				// save the changes
-				return record.save();
+			// computed property for enabling/disabling the custom attribute
+			var attributeEnabled = Ember.computed(
+				"model." + attr,
+				function( key, value ) {
+					// old CP-setter syntax (as of ember 1.12.0)
+					if ( arguments.length > 1 ) {
+						// false => set attr value to null (delete)
+						// true  => set attr value to global value (init)
+						value = !!value;
+						set( model, attr, value
+							? get( settings, attr )
+							: null
+						);
+						return value;
+					} else {
+						// false => use global attribute (default)
+						// true  => use custom attribute
+						return get( model, attr ) !== customDefault;
+					}
+				}
+			);
 
-			} else if ( get( record, "isNew" ) ) {
-				// don't do anything here
-				return Promise.resolve();
+			Ember.defineProperty( this,       attr, attributeProxy );
+			Ember.defineProperty( this, "_" + attr, attributeEnabled );
+		}, this );
+	}.observes( "model" ),
 
-			} else {
-				// tell the adapter to remove the record
-				return record.destroyRecord()
-					.then(function() {
-						// but return back to `root.loaded.created.uncommitted`.
-						// At this point, the record has already been removed from the store, but
-						// saving it again later will work just fine...
-						record.transitionTo( "loaded.created.uncommitted" );
-					});
+	/**
+	 * Prevent pollution:
+	 * Destroy all records that don't have custom values set, otherwise just save it normally
+	 * @param record
+	 * @returns {Promise}
+	 */
+	saveRecord: function( record ) {
+		// check if the record has any values set
+		var isEmpty = true;
+		record.eachAttribute(function( attr, meta ) {
+			if ( get( record, attr ) !== meta.options.defaultValue ) {
+				isEmpty = false;
 			}
+		});
+
+		if ( !isEmpty ) {
+			// save the changes
+			return record.save();
+
+		} else if ( get( record, "isNew" ) ) {
+			// don't do anything here
+			return Promise.resolve();
+
+		} else {
+			// tell the adapter to remove the record
+			return record.destroyRecord()
+				.then(function() {
+					// but return back to `root.loaded.created.uncommitted`.
+					// At this point, the record has already been removed from the store, but
+					// saving it again later will work just fine...
+					record.transitionTo( "loaded.created.uncommitted" );
+				});
+		}
+	},
+
+	actions: {
+		"apply": function( callback ) {
+			var model = get( this, "model" ).applyChanges( true );
+			this.saveRecord( model )
+				.then( callback )
+				.then( this.send.bind( this, "closeModal" ) )
+				.then( this.retryTransition.bind( this ) )
+				.catch( model.rollback.bind( model ) );
 		},
 
-		actions: {
-			"apply": function( callback ) {
-				var model = get( this, "model" ).applyChanges( true );
-				this.saveRecord( model )
-					.then( callback )
-					.then( this.send.bind( this, "closeModal" ) )
-					.then( this.retryTransition.bind( this ) )
-					.catch( model.rollback.bind( model ) );
-			},
-
-			"discard": function( callback ) {
-				get( this, "model" ).discardChanges();
-				Promise.resolve()
-					.then( callback )
-					.then( this.send.bind( this, "closeModal" ) )
-					.then( this.retryTransition.bind( this ) );
-			}
+		"discard": function( callback ) {
+			get( this, "model" ).discardChanges();
+			Promise.resolve()
+				.then( callback )
+				.then( this.send.bind( this, "closeModal" ) )
+				.then( this.retryTransition.bind( this ) );
 		}
-	});
-
+	}
 });

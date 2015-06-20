@@ -1,58 +1,55 @@
-define([
-	"Ember",
-	"text!templates/components/settingsbar.html.hbs"
-], function( Ember, template ) {
+import Ember from "Ember";
+import layout from "text!templates/components/settingsbar.html.hbs";
 
-	var get = Ember.get;
-	var set = Ember.set;
-	var alias = Ember.computed.alias;
-	var equal = Ember.computed.equal;
-	var not = Ember.computed.not;
-
-	return Ember.Component.extend({
-		layout: Ember.HTMLBars.compile( template ),
-		tagName: "div",
-		classNameBindings: [ ":settingsbar", "isOpened:opened" ],
-
-		settings: alias( "targetObject.settings" ),
-
-		isOpened: false,
-
-		btnHomepage: false,
-		btnLayout: false,
+var get = Ember.get;
+var set = Ember.set;
+var alias = Ember.computed.alias;
+var equal = Ember.computed.equal;
+var not = Ember.computed.not;
 
 
-		url: function() {
-			return get( this, "targetObject.target.location" ).getURL();
-		}.property( "targetObject.target.location" ).volatile(),
+export default Ember.Component.extend({
+	layout: Ember.HTMLBars.compile( layout ),
+	tagName: "div",
+	classNameBindings: [ ":settingsbar", "isOpened:opened" ],
 
-		isHomepage: function() {
-			return get( this, "url" ) === get( this, "settings.gui_homepage" );
-		}.property( "url", "settings.gui_homepage" ),
+	settings: alias( "targetObject.settings" ),
 
-		isLayoutTile: equal( "settings.gui_layout", "tile" ),
-		isLayoutList: not( "isLayoutTile" ),
+	isOpened: false,
+
+	btnHomepage: false,
+	btnLayout: false,
 
 
-		actions: {
-			toggle: function() {
-				this.toggleProperty( "isOpened" );
-			},
+	url: function() {
+		return get( this, "targetObject.target.location" ).getURL();
+	}.property( "targetObject.target.location" ).volatile(),
 
-			homepage: function( url, callback ) {
-				set( this, "settings.gui_homepage", url );
-				get( this, "settings" ).save().then(function() {
-					if ( callback ) { callback(); }
-				});
-			},
+	isHomepage: function() {
+		return get( this, "url" ) === get( this, "settings.gui_homepage" );
+	}.property( "url", "settings.gui_homepage" ),
 
-			layout: function( mode, callback ) {
-				set( this, "settings.gui_layout", mode );
-				get( this, "settings" ).save().then(function() {
-					if ( callback ) { callback(); }
-				});
-			}
+	isLayoutTile: equal( "settings.gui_layout", "tile" ),
+	isLayoutList: not( "isLayoutTile" ),
+
+
+	actions: {
+		toggle: function() {
+			this.toggleProperty( "isOpened" );
+		},
+
+		homepage: function( url, callback ) {
+			set( this, "settings.gui_homepage", url );
+			get( this, "settings" ).save().then(function() {
+				if ( callback ) { callback(); }
+			});
+		},
+
+		layout: function( mode, callback ) {
+			set( this, "settings.gui_layout", mode );
+			get( this, "settings" ).save().then(function() {
+				if ( callback ) { callback(); }
+			});
 		}
-	});
-
+	}
 });

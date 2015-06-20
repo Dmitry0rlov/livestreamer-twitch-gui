@@ -1,7 +1,6 @@
-define( [ "Ember" ], function( Ember ) {
+import Ember from "Ember";
 
-	return Ember.ArrayController.extend({
-		game: null
-	});
 
+export default Ember.ArrayController.extend({
+	game: null
 });

@@ -33,7 +33,7 @@ define(function( require ) {
 		], function() {
 
 			// load the app module
-			require( [ "app" ] );
+			require( [ "es6!app" ] );
 
 		});
 

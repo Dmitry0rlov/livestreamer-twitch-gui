@@ -1,83 +1,83 @@
-define( [ "Ember", "nwjs/nwWindow" ], function( Ember, nwWindow ) {
+import Ember from "Ember";
+import nwWindow from "nwjs/nwWindow";
 
-	var get = Ember.get;
-	var readOnly = Ember.computed.readOnly;
-
-	return Ember.Controller.extend({
-		auth        : Ember.inject.service(),
-		notification: Ember.inject.service(),
-
-		needs: [ "livestreamer" ],
-
-		dev: DEBUG,
-
-		streamsLength: readOnly( "controllers.livestreamer.model.length" ),
-
-		notif_enabled: readOnly( "notification.enabled" ),
-		notif_running: readOnly( "notification.running" ),
-		notif_error  : readOnly( "notification.error" ),
-
-		loginSuccess: readOnly( "auth.session.isLoggedIn" ),
-		loginPending: readOnly( "auth.session.isPending" ),
-		loginTitle  : function() {
-			return get( this, "loginSuccess" )
-				? "Logged in as %@%@".fmt(
-					get( this, "auth.session.user_name" ),
-					get( this, "notif_running" )
-						? "\nDesktop notifications enabled"
-						: get( this, "notif_error" )
-							? "\nDesktop notifications error"
-							: ""
-				)
-				: "You're not logged in";
-		}.property( "loginSuccess", "notif_running", "notif_error" ),
+var get = Ember.get;
+var readOnly = Ember.computed.readOnly;
 
 
-		actions: {
-			"winRefresh": function() {
-				nwWindow.reloadIgnoringCache();
-			},
+export default Ember.Controller.extend({
+	auth        : Ember.inject.service(),
+	notification: Ember.inject.service(),
 
-			"winDevTools": function() {
-				nwWindow.showDevTools();
-			},
+	needs: [ "livestreamer" ],
 
-			"winMin": function() {
-				var integration    = get( this, "settings.gui_integration" ),
-				    minimizetotray = get( this, "settings.gui_minimizetotray" );
+	dev: DEBUG,
 
-				// tray only or both with min2tray: just hide the window
-				if ( integration === 2 || integration === 3 && minimizetotray ) {
-					nwWindow.toggleVisibility( false );
-				} else {
-					nwWindow.toggleMinimize( false );
-				}
-			},
+	streamsLength: readOnly( "controllers.livestreamer.model.length" ),
 
-			"winMax": function() {
-				nwWindow.toggleMaximize();
-			},
+	notif_enabled: readOnly( "notification.enabled" ),
+	notif_running: readOnly( "notification.running" ),
+	notif_error  : readOnly( "notification.error" ),
 
-			"winClose": function() {
-				if ( get( this, "streamsLength" ) ) {
-					this.send( "openModal", "quitModal", this, {
-						modalHead: "Are you sure you want to quit?",
-						modalBody: "By choosing shutdown, all streams will be closed, too."
-					});
-				} else {
-					this.send( "quit" );
-				}
-			},
+	loginSuccess: readOnly( "auth.session.isLoggedIn" ),
+	loginPending: readOnly( "auth.session.isPending" ),
+	loginTitle  : function() {
+		return get( this, "loginSuccess" )
+			? "Logged in as %@%@".fmt(
+				get( this, "auth.session.user_name" ),
+				get( this, "notif_running" )
+					? "\nDesktop notifications enabled"
+					: get( this, "notif_error" )
+						? "\nDesktop notifications error"
+						: ""
+			)
+			: "You're not logged in";
+	}.property( "loginSuccess", "notif_running", "notif_error" ),
 
-			"quit": function() {
-				nwWindow.close( true );
-			},
 
-			"shutdown": function() {
-				get( this, "controllers.livestreamer" ).killAll();
+	actions: {
+		"winRefresh": function() {
+			nwWindow.reloadIgnoringCache();
+		},
+
+		"winDevTools": function() {
+			nwWindow.showDevTools();
+		},
+
+		"winMin": function() {
+			var integration    = get( this, "settings.gui_integration" ),
+			    minimizetotray = get( this, "settings.gui_minimizetotray" );
+
+			// tray only or both with min2tray: just hide the window
+			if ( integration === 2 || integration === 3 && minimizetotray ) {
+				nwWindow.toggleVisibility( false );
+			} else {
+				nwWindow.toggleMinimize( false );
+			}
+		},
+
+		"winMax": function() {
+			nwWindow.toggleMaximize();
+		},
+
+		"winClose": function() {
+			if ( get( this, "streamsLength" ) ) {
+				this.send( "openModal", "quitModal", this, {
+					modalHead: "Are you sure you want to quit?",
+					modalBody: "By choosing shutdown, all streams will be closed, too."
+				});
+			} else {
 				this.send( "quit" );
 			}
-		}
-	});
+		},
 
+		"quit": function() {
+			nwWindow.close( true );
+		},
+
+		"shutdown": function() {
+			get( this, "controllers.livestreamer" ).killAll();
+			this.send( "quit" );
+		}
+	}
 });

@@ -1,20 +1,21 @@
-define( [ "store/TwitchSerializer" ], function( TwitchSerializer ) {
+import TwitchSerializer from "store/TwitchSerializer";
 
-	return TwitchSerializer.extend({
-		attrs: {
-			stream: { deserialize: "records" }
-		},
 
-		typeForRoot: function() {
-			return "twitchStreamsFeatured";
-		},
+export default TwitchSerializer.extend({
 
-		normalizeHash: {
-			featured: function( hash ) {
-				hash.id = hash.stream._id;
-				return hash;
-			}
+	attrs: {
+		stream: { deserialize: "records" }
+	},
+
+	typeForRoot: function() {
+		return "twitchStreamsFeatured";
+	},
+
+	normalizeHash: {
+		featured: function( hash ) {
+			hash.id = hash.stream._id;
+			return hash;
 		}
-	});
+	}
 
 });

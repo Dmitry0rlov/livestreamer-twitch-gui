@@ -1,22 +1,19 @@
-define([
-	"Ember",
-	"mixins/PreviewImageViewMixin"
-], function( Ember, PreviewImageViewMixin ) {
+import Ember from "Ember";
+import PreviewImageViewMixin from "mixins/PreviewImageViewMixin";
 
-	var set = Ember.set;
+var set = Ember.set;
 
-	return Ember.Component.extend( PreviewImageViewMixin, {
-		tagName: "li",
-		classNameBindings: [ "isNewItem:newItem" ],
 
-		isNewItem: false,
+export default Ember.Component.extend( PreviewImageViewMixin, {
+	tagName: "li",
+	classNameBindings: [ "isNewItem:newItem" ],
 
-		init: function() {
-			this._super.apply( this, arguments );
+	isNewItem: false,
 
-			var settings = this.container.lookup( "record:settings" );
-			set( this, "settings", settings );
-		}
-	});
+	init: function() {
+		this._super.apply( this, arguments );
 
+		var settings = this.container.lookup( "record:settings" );
+		set( this, "settings", settings );
+	}
 });

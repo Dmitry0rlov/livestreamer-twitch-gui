@@ -1,5 +1,1 @@
-define( [], function() {
-
-	return window.nwDispatcher.requireNwGui();
-
-});
+export default require( "nw.gui" );

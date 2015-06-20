@@ -1,24 +1,21 @@
-define([
-	"Ember",
-	"components/ListItemComponent",
-	"text!templates/components/game.html.hbs"
-], function( Ember, ListItemComponent, template ) {
+import Ember from "Ember";
+import ListItemComponent from "components/ListItemComponent";
+import layout from "text!templates/components/game.html.hbs";
 
-	var get = Ember.get;
-	var any = Ember.computed.any;
+var get = Ember.get;
+var any = Ember.computed.any;
 
-	return ListItemComponent.extend({
-		layout: Ember.HTMLBars.compile( template ),
-		classNames: [ "game-component" ],
 
-		action: "goto",
+export default ListItemComponent.extend({
+	layout: Ember.HTMLBars.compile( layout ),
+	classNames: [ "game-component" ],
 
-		game: any( "content.game", "content" ),
-		hasStats: any( "content.channels", "content.viewers" ),
+	action: "goto",
 
-		click: function() {
-			this.sendAction( "action", "games.game", get( this, "game.name" ) );
-		}
-	});
+	game: any( "content.game", "content" ),
+	hasStats: any( "content.channels", "content.viewers" ),
 
+	click: function() {
+		this.sendAction( "action", "games.game", get( this, "game.name" ) );
+	}
 });

@@ -1,16 +1,15 @@
-define( [ "Ember" ], function( Ember ) {
+import Ember from "Ember";
 
-	var $     = Ember.$;
-	var $node = $( "<div>" ).addClass( "previewError" );
+var $     = Ember.$;
+var $node = $( "<div>" ).addClass( "previewError" );
 
-	return Ember.Mixin.create({
-		willInsertElement: function() {
-			this._super.apply( this, arguments );
 
-			this.$( ".previewImage" ).one( "error", function() {
-				$( this ).replaceWith( $node.clone() );
-			});
-		}
-	});
+export default Ember.Mixin.create({
+	willInsertElement: function() {
+		this._super.apply( this, arguments );
 
+		this.$( ".previewImage" ).one( "error", function() {
+			$( this ).replaceWith( $node.clone() );
+		});
+	}
 });

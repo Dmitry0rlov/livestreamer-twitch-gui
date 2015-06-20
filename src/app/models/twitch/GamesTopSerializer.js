@@ -1,20 +1,21 @@
-define( [ "store/TwitchSerializer" ], function( TwitchSerializer ) {
+import TwitchSerializer from "store/TwitchSerializer";
 
-	return TwitchSerializer.extend({
-		attrs: {
-			game: { deserialize: "records" }
-		},
 
-		typeForRoot: function() {
-			return "twitchGamesTop";
-		},
+export default TwitchSerializer.extend({
 
-		normalizeHash: {
-			top: function( hash ) {
-				hash.id = hash.game._id;
-				return hash;
-			}
+	attrs: {
+		game: { deserialize: "records" }
+	},
+
+	typeForRoot: function() {
+		return "twitchGamesTop";
+	},
+
+	normalizeHash: {
+		top: function( hash ) {
+			hash.id = hash.game._id;
+			return hash;
 		}
-	});
+	}
 
 });

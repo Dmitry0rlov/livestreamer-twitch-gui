@@ -1,15 +1,16 @@
-define( [ "EmberData" ], function( DS ) {
+import DS from "EmberData";
 
-	return DS.RESTSerializer.extend({
-		typeForRoot: function() {
-			return "githubReleases";
-		},
 
-		normalizePayload: function( payload ) {
-			return {
-				githubReleases: payload
-			};
-		}
-	});
+export default DS.RESTSerializer.extend({
+
+	typeForRoot: function() {
+		return "githubReleases";
+	},
+
+	normalizePayload: function( payload ) {
+		return {
+			githubReleases: payload
+		};
+	}
 
 });

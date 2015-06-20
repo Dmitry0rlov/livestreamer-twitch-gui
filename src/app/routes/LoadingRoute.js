@@ -1,5 +1,4 @@
-define( [ "Ember" ], function( Ember ) {
+import Ember from "Ember";
 
-	return Ember.Route.extend({});
 
-});
+export default Ember.Route.extend({});

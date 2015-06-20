@@ -1,10 +1,9 @@
-define( [ "Ember" ], function( Ember ) {
+import Ember from "Ember";
 
-	return Ember.ArrayController.extend({
-		auth: Ember.inject.service(),
 
-		sortAscending: false,
-		sortProperties: [ "started" ]
-	});
+export default Ember.ArrayController.extend({
+	auth: Ember.inject.service(),
 
+	sortAscending: false,
+	sortProperties: [ "started" ]
 });

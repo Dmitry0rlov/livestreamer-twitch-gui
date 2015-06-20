@@ -1,28 +1,29 @@
-define( [ "store/TwitchSerializer" ], function( TwitchSerializer ) {
+import TwitchSerializer from "store/TwitchSerializer";
 
-	return TwitchSerializer.extend({
-		attrs: {
-			game: { deserialize: "records" }
-		},
 
-		typeForRoot: function() {
-			return "twitchSearchGame";
-		},
+export default TwitchSerializer.extend({
 
-		normalizePayload: function( payload ) {
-			return {
-				games: ( payload.games || [] ).map(function( hash ) {
-					return { game: hash };
-				})
-			};
-		},
+	attrs: {
+		game: { deserialize: "records" }
+	},
 
-		normalizeHash: {
-			games: function( hash ) {
-				hash.id = hash.game._id;
-				return hash;
-			}
+	typeForRoot: function() {
+		return "twitchSearchGame";
+	},
+
+	normalizePayload: function( payload ) {
+		return {
+			games: ( payload.games || [] ).map(function( hash ) {
+				return { game: hash };
+			})
+		};
+	},
+
+	normalizeHash: {
+		games: function( hash ) {
+			hash.id = hash.game._id;
+			return hash;
 		}
-	});
+	}
 
 });

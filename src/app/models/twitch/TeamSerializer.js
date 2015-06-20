@@ -1,9 +1,10 @@
-define( [ "store/TwitchSerializer" ], function( TwitchSerializer ) {
+import TwitchSerializer from "store/TwitchSerializer";
 
-	return TwitchSerializer.extend({
-		typeForRoot: function() {
-			return "twitchTeam";
-		}
-	});
+
+export default TwitchSerializer.extend({
+
+	typeForRoot: function() {
+		return "twitchTeam";
+	}
 
 });

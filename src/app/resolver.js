@@ -1,19 +1,16 @@
-define( [ "Ember" ], function( Ember ) {
+import Ember from "Ember";
 
-	return Ember.DefaultResolver.extend({
 
-		/**
-		 * resolve templates like everything else
-		 * also compile templates afterwards
-		 */
-		resolveTemplate: function( name ) {
-			this.useRouterNaming( name );
-			var template = this.resolveOther( name );
-			return typeof template === "string"
-				? Ember.HTMLBars.compile( template )
-				: template;
-		}
-
-	});
-
+export default Ember.DefaultResolver.extend({
+	/**
+	 * resolve templates like everything else
+	 * also compile templates afterwards
+	 */
+	resolveTemplate: function( name ) {
+		this.useRouterNaming( name );
+		var template = this.resolveOther( name );
+		return typeof template === "string"
+			? Ember.HTMLBars.compile( template )
+			: template;
+	}
 });

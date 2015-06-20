@@ -1,16 +1,13 @@
-define([
-	"Ember",
-	"mixins/RetryTransitionMixin"
-], function( Ember, RetryTransitionMixin ) {
+import Ember from "Ember";
+import RetryTransitionMixin from "mixins/RetryTransitionMixin";
 
-	var get = Ember.get;
+var get = Ember.get;
 
-	return Ember.Controller.extend( RetryTransitionMixin, {
-		auth: Ember.inject.service(),
 
-		scope: function() {
-			return get( this, "auth.scope" ).join( ", " );
-		}.property( "auth.scope" )
-	});
+export default Ember.Controller.extend( RetryTransitionMixin, {
+	auth: Ember.inject.service(),
 
+	scope: function() {
+		return get( this, "auth.scope" ).join( ", " );
+	}.property( "auth.scope" )
 });

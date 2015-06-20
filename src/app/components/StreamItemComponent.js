@@ -1,32 +1,29 @@
-define([
-	"Ember",
-	"components/ListItemComponent",
-	"text!templates/components/stream.html.hbs"
-], function( Ember, ListItemComponent, template ) {
+import Ember from "Ember";
+import ListItemComponent from "components/ListItemComponent";
+import layout from "text!templates/components/stream.html.hbs";
 
-	var get = Ember.get;
-	var alias = Ember.computed.alias;
-	var and = Ember.computed.and;
-	var bool = Ember.computed.bool;
+var get = Ember.get;
+var alias = Ember.computed.alias;
+var and = Ember.computed.and;
+var bool = Ember.computed.bool;
 
-	return ListItemComponent.extend({
-		layout: Ember.HTMLBars.compile( template ),
-		classNameBindings: [ ":stream-component", "_showGame:show-game", "showFlag:show-flag" ],
 
-		action: "openLivestreamer",
+export default ListItemComponent.extend({
+	layout: Ember.HTMLBars.compile( layout ),
+	classNameBindings: [ ":stream-component", "_showGame:show-game", "showFlag:show-flag" ],
 
-		channel: alias( "content.channel" ),
+	action: "openLivestreamer",
 
-		showGame: false,
-		_showGame: and( "showGame", "channel.game" ),
+	channel: alias( "content.channel" ),
 
-		showFlag: bool( "settings.gui_flagsvisible" ),
+	showGame: false,
+	_showGame: and( "showGame", "channel.game" ),
 
-		actions: {
-			"startStream": function() {
-				this.sendAction( "action", get( this, "content" ) );
-			}
+	showFlag: bool( "settings.gui_flagsvisible" ),
+
+	actions: {
+		"startStream": function() {
+			this.sendAction( "action", get( this, "content" ) );
 		}
-	});
-
+	}
 });

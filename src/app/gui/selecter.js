@@ -1,14 +1,15 @@
-define( [ "JQuery", "Selecter" ], function() {
+import {} from "Selecter";
 
-	return function( $select ) {
-		var	classnames = [].slice.call( $select[0].classList )
-				.without( "ember-view" )
-				.without( "ember-select" );
+function selecter( $select ) {
+	var classnames = [].slice.call( $select[0].classList )
+		.without( "ember-view" )
+		.without( "ember-select" );
 
-		$select.selecter({
-			customClass: "custom" + ( classnames.length ? " " + classnames.join( " " ) : "" ),
-			cover: true
-		});
-	};
+	$select.selecter({
+		customClass: "custom" + ( classnames.length ? " " + classnames.join( " " ) : "" ),
+		cover: true
+	});
+}
 
-});
+
+export default selecter;

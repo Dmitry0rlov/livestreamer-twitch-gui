@@ -1,16 +1,19 @@
-define( [ "EmberData" ], function( DS ) {
+import DS from "EmberData";
 
-	var attr = DS.attr;
-	var belongsTo = DS.belongsTo;
+var attr = DS.attr;
+var belongsTo = DS.belongsTo;
 
-	return DS.Model.extend({
-		box: belongsTo( "twitchImage" ),
-		giantbomb_id: attr( "number" ),
-		logo: belongsTo( "twitchImage" ),
-		name: attr( "string" ),
-		properties: attr( "number" )
-	}).reopenClass({
-		toString: function() { return "api/users/:user/follows/games"; }
-	});
+
+export default DS.Model.extend({
+
+	box: belongsTo( "twitchImage" ),
+	giantbomb_id: attr( "number" ),
+	logo: belongsTo( "twitchImage" ),
+	name: attr( "string" ),
+	properties: attr( "number" )
+
+}).reopenClass({
+
+	toString: function() { return "api/users/:user/follows/games"; }
 
 });

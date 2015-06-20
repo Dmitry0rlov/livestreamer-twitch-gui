@@ -7,6 +7,11 @@ module.exports = {
 		out : "build/tmp/app/main.js",
 
 		include: [ "main" ],
+		exclude: [ "babel" ],
+
+		pragmasOnSave: {
+			excludeBabel: true
+		},
 
 		findNestedDependencies: true,
 		generateSourceMaps    : false,

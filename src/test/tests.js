@@ -46,6 +46,9 @@ define(function( require ) {
 
 			require( [ "text!../../tests.json" ], function( tests ) {
 				tests = JSON.parse( tests ).tests;
+				tests = tests.map(function( test ) {
+					return "es6!" + test;
+				});
 
 				// then load tests and start QUnit
 				require( tests, window.startQUnit );

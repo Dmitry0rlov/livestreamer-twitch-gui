@@ -1,29 +1,31 @@
-define( [ "Ember", "EmberData" ], function( Ember, DS ) {
+import Ember from "Ember";
+import DS from "EmberData";
 
-	var get = Ember.get;
-	var attr = DS.attr;
-
-	return DS.Model.extend({
-		access_token: attr( "string" ),
-		scope       : attr( "string" ),
-		date        : attr( "date" ),
+var get = Ember.get;
+var attr = DS.attr;
 
 
-		// volatile property
-		user_name : null,
+export default DS.Model.extend({
 
-		// status properties
-		isPending : false,
-		isLoggedIn: function() {
-			var token   = get( this, "access_token" );
-			var name    = get( this, "user_name" );
-			var pending = get( this, "isPending" );
+	access_token: attr( "string" ),
+	scope       : attr( "string" ),
+	date        : attr( "date" ),
 
-			return token && name && !pending;
-		}.property( "access_token", "user_name", "isPending" )
+	// volatile property
+	user_name : null,
 
-	}).reopenClass({
-		toString: function() { return "Auth"; }
-	});
+	// status properties
+	isPending : false,
+	isLoggedIn: function() {
+		var token   = get( this, "access_token" );
+		var name    = get( this, "user_name" );
+		var pending = get( this, "isPending" );
+
+		return token && name && !pending;
+	}.property( "access_token", "user_name", "isPending" )
+
+}).reopenClass({
+
+	toString: function() { return "Auth"; }
 
 });

@@ -1,21 +1,22 @@
-define( [ "store/TwitchSerializer" ], function( TwitchSerializer ) {
+import TwitchSerializer from "store/TwitchSerializer";
 
-	return TwitchSerializer.extend({
-		primaryKey: "name",
 
-		attrs : {
-			teams: { deserialize: "records" }
-		},
+export default TwitchSerializer.extend({
 
-		normalizePayload: function( payload ) {
-			return {
-				twitchChannel: payload
-			};
-		},
+	primaryKey: "name",
 
-		typeForRoot: function() {
-			return "twitchChannel";
-		}
-	});
+	attrs : {
+		teams: { deserialize: "records" }
+	},
+
+	normalizePayload: function( payload ) {
+		return {
+			twitchChannel: payload
+		};
+	},
+
+	typeForRoot: function() {
+		return "twitchChannel";
+	}
 
 });

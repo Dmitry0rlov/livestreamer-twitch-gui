@@ -1,68 +1,65 @@
-define([
-	"Ember",
-	"text!templates/components/formbutton.html.hbs"
-], function( Ember, template ) {
+import Ember from "Ember";
+import layout from "text!templates/components/formbutton.html.hbs";
 
-	var get = Ember.get;
-	var set = Ember.set;
-	var and = Ember.computed.and;
+var get = Ember.get;
+var set = Ember.set;
+var and = Ember.computed.and;
 
-	return Ember.Component.extend({
-		layout: Ember.HTMLBars.compile( template ),
-		tagName: "button",
-		attributeBindings: [ "type", "title", "disabled" ],
-		type: "button",
-		title: null,
-		classNameBindings: [
-			":btn",
-			"_iconAndNoText:btn-icon",
-			"_iconAndText:btn-with-icon",
-			"_iconanim:btn-with-anim",
-			"class"
-		],
-		class: null,
 
-		action: null,
-		actionParam: null,
+export default Ember.Component.extend({
+	layout: Ember.HTMLBars.compile( layout ),
+	tagName: "button",
+	attributeBindings: [ "type", "title", "disabled" ],
+	type: "button",
+	title: null,
+	classNameBindings: [
+		":btn",
+		"_iconAndNoText:btn-icon",
+		"_iconAndText:btn-with-icon",
+		"_iconanim:btn-with-anim",
+		"class"
+	],
+	"class": null,
 
-		icon: false,
-		_iconAndText: and( "icon", "template" ),
-		_iconAndNoText: function() {
-			return get( this, "icon" ) && !get( this, "template" );
-		}.property( "icon", "template" ),
+	action: null,
+	actionParam: null,
 
-		iconanim: false,
-		_iconanim: false,
+	icon: false,
+	_iconAndText: and( "icon", "template" ),
+	_iconAndNoText: function() {
+		return get( this, "icon" ) && !get( this, "template" );
+	}.property( "icon", "template" ),
 
-		click: function() {
-			var self    = this,
-			    target  = get( this, "targetObject" ),
-			    action  = get( this, "action" ),
-			    context = Ember.makeArray( get( this, "actionParam" ) );
+	iconanim: false,
+	_iconanim: false,
 
-			if ( !action ) { return; }
+	click: function() {
+		var self    = this,
+		    target  = get( this, "targetObject" ),
+		    action  = get( this, "action" ),
+		    context = Ember.makeArray( get( this, "actionParam" ) );
 
-			if ( get( this, "iconanim" ) ) {
-				context = context.concat(function animationStart( data ) {
-					var defer = Promise.defer();
-					set( self, "_iconanim", true );
-					self.$().one( "webkitAnimationEnd", function animationEnd( e ) {
-						e = e.originalEvent;
-						if ( e.animationName !== "animIconScale" ) { return; }
+		if ( !action ) { return; }
 
-						set( self, "_iconanim", false );
-						defer.resolve( data );
-					});
-					return defer.promise;
+		if ( get( this, "iconanim" ) ) {
+			context = context.concat(function animationStart( data ) {
+				var defer = Promise.defer();
+				set( self, "_iconanim", true );
+				self.$().one( "webkitAnimationEnd", function animationEnd( e ) {
+					e = e.originalEvent;
+					if ( e.animationName !== "animIconScale" ) { return; }
+
+					set( self, "_iconanim", false );
+					defer.resolve( data );
 				});
-			}
-
-			this.triggerAction({
-				target: target,
-				action: action,
-				actionContext: context
+				return defer.promise;
 			});
 		}
-	});
 
+		this.triggerAction({
+			target: target,
+			action: action,
+			actionContext: context
+		});
+	}
 });

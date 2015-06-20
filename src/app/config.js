@@ -19,7 +19,9 @@ requirejs.config({
 
 	"paths": {
 		// RequireJS plugins
-		"text": "../vendor/requirejs-text/text",
+		"es6"  : "./es6",
+		"babel": "./babel",
+		"text" : "../vendor/requirejs-text/text",
 
 		// Vendor
 		"Ember"        : "../vendor/ember/ember.debug",

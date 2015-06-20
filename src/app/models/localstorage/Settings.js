@@ -1,101 +1,101 @@
-define( [ "Ember", "EmberData" ], function( Ember, DS ) {
+import Ember from "Ember";
+import DS from "EmberData";
 
-	var get = Ember.get;
-	var set = Ember.set;
-	var attr = DS.attr;
-
-	return DS.Model.extend({
-
-		advanced            : attr( "boolean", { defaultValue: false } ),
-		livestreamer        : attr( "string",  { defaultValue: "" } ),
-		livestreamer_params : attr( "string",  { defaultValue: "" } ),
-		quality             : attr( "number",  { defaultValue: 0 } ),
-		player              : attr( "string",  { defaultValue: "" } ),
-		player_params       : attr( "string",  { defaultValue: "" } ),
-		player_passthrough  : attr( "string",  { defaultValue: "http" } ),
-		player_reconnect    : attr( "boolean", { defaultValue: true } ),
-		player_no_close     : attr( "boolean", { defaultValue: false } ),
-		gui_integration     : attr( "number",  { defaultValue: 3 } ),
-		gui_minimizetotray  : attr( "number",  { defaultValue: false } ),
-		gui_minimize        : attr( "number",  { defaultValue: 0 } ),
-		gui_hidestreampopup : attr( "boolean", { defaultValue: false } ),
-		gui_openchat        : attr( "boolean", { defaultValue: false } ),
-		gui_homepage        : attr( "string",  { defaultValue: "/featured" } ),
-		gui_layout          : attr( "string",  { defaultValue: "tile" } ),
-		gui_flagsvisible    : attr( "boolean", { defaultValue: false } ),
-		notify_enabled      : attr( "boolean", { defaultValue: true } ),
-		notify_all          : attr( "boolean", { defaultValue: true } ),
-		notify_grouping     : attr( "boolean", { defaultValue: true } ),
-		notify_click        : attr( "number",  { defaultValue: 1 } ),
-		notify_click_group  : attr( "number",  { defaultValue: 1 } ),
-		notify_badgelabel   : attr( "boolean", { defaultValue: true } ),
-		hls_live_edge       : attr( "number",  { defaultValue: 3, minValue: 1, maxValue: 10 } ),
-		hls_segment_threads : attr( "number",  { defaultValue: 1, minValue: 1, maxValue: 10 } ),
+var get = Ember.get;
+var set = Ember.set;
+var attr = DS.attr;
 
 
-		// correct old value
-		gui_minimize_observer: function() {
-			if ( isNaN( get( this, "gui_minimize" ) ) ) {
-				set( this, "gui_minimize", 0 );
-			}
-		}.observes( "gui_minimize" ),
+export default DS.Model.extend({
 
-		isVisibleInTaskbar: function() {
-			return ( get( this, "gui_integration" ) & 1 ) > 0;
-		}.property( "gui_integration" ),
+	advanced            : attr( "boolean", { defaultValue: false } ),
+	livestreamer        : attr( "string",  { defaultValue: "" } ),
+	livestreamer_params : attr( "string",  { defaultValue: "" } ),
+	quality             : attr( "number",  { defaultValue: 0 } ),
+	player              : attr( "string",  { defaultValue: "" } ),
+	player_params       : attr( "string",  { defaultValue: "" } ),
+	player_passthrough  : attr( "string",  { defaultValue: "http" } ),
+	player_reconnect    : attr( "boolean", { defaultValue: true } ),
+	player_no_close     : attr( "boolean", { defaultValue: false } ),
+	gui_integration     : attr( "number",  { defaultValue: 3 } ),
+	gui_minimizetotray  : attr( "number",  { defaultValue: false } ),
+	gui_minimize        : attr( "number",  { defaultValue: 0 } ),
+	gui_hidestreampopup : attr( "boolean", { defaultValue: false } ),
+	gui_openchat        : attr( "boolean", { defaultValue: false } ),
+	gui_homepage        : attr( "string",  { defaultValue: "/featured" } ),
+	gui_layout          : attr( "string",  { defaultValue: "tile" } ),
+	gui_flagsvisible    : attr( "boolean", { defaultValue: false } ),
+	notify_enabled      : attr( "boolean", { defaultValue: true } ),
+	notify_all          : attr( "boolean", { defaultValue: true } ),
+	notify_grouping     : attr( "boolean", { defaultValue: true } ),
+	notify_click        : attr( "number",  { defaultValue: 1 } ),
+	notify_click_group  : attr( "number",  { defaultValue: 1 } ),
+	notify_badgelabel   : attr( "boolean", { defaultValue: true } ),
+	hls_live_edge       : attr( "number",  { defaultValue: 3, minValue: 1, maxValue: 10 } ),
+	hls_segment_threads : attr( "number",  { defaultValue: 1, minValue: 1, maxValue: 10 } ),
 
-		isVisibleInTray: function() {
-			return ( get( this, "gui_integration" ) & 2 ) > 0;
-		}.property( "gui_integration" )
 
-	}).reopenClass({
+	// correct old value
+	gui_minimize_observer: function() {
+		if ( isNaN( get( this, "gui_minimize" ) ) ) {
+			set( this, "gui_minimize", 0 );
+		}
+	}.observes( "gui_minimize" ),
 
-		toString: function() { return "Settings"; },
+	isVisibleInTaskbar: function() {
+		return ( get( this, "gui_integration" ) & 1 ) > 0;
+	}.property( "gui_integration" ),
 
-		qualities: [
-			{ id: 0, label: "Source", quality: "source,best" },
-			{ id: 1, label: "High",   quality: "high,mobile_high,best" },
-			{ id: 2, label: "Medium", quality: "medium,mobile_medium,worst" },
-			{ id: 3, label: "Low",    quality: "low,mobile_mobile,worst" }
-		],
+	isVisibleInTray: function() {
+		return ( get( this, "gui_integration" ) & 2 ) > 0;
+	}.property( "gui_integration" )
 
-		passthrough: [
-			{ value: "http", label: "http" },
-			{ value: "rtmp", label: "rtmp" },
-			{ value: "hls",  label: "hls" }
-		],
+}).reopenClass({
 
-		// bitwise IDs: both & 1 && both & 2
-		integration: [
-			{ id: 3, label: "Both" },
-			{ id: 1, label: "Taskbar" },
-			{ id: 2, label: "Tray" }
-		],
+	toString: function() { return "Settings"; },
 
-		minimize: [
-			{ id: 0, label: "Do nothing" },
-			{ id: 1, label: "Minimize" },
-			{ id: 2, label: "Move to tray" }
-		],
+	qualities: [
+		{ id: 0, label: "Source", quality: "source,best" },
+		{ id: 1, label: "High",   quality: "high,mobile_high,best" },
+		{ id: 2, label: "Medium", quality: "medium,mobile_medium,worst" },
+		{ id: 3, label: "Low",    quality: "low,mobile_mobile,worst" }
+	],
 
-		notify_all: [
-			{ value: true,  label: "Show all except disabled ones" },
-			{ value: false, label: "Ignore all except enabled ones" }
-		],
+	passthrough: [
+		{ value: "http", label: "http" },
+		{ value: "rtmp", label: "rtmp" },
+		{ value: "hls",  label: "hls" }
+	],
 
-		notify_click: [
-			{ id: 0, label: "Do nothing" },
-			{ id: 1, label: "Go to favorites" },
-			{ id: 2, label: "Open stream" },
-			{ id: 3, label: "Open stream+chat" }
-		],
+	// bitwise IDs: both & 1 && both & 2
+	integration: [
+		{ id: 3, label: "Both" },
+		{ id: 1, label: "Taskbar" },
+		{ id: 2, label: "Tray" }
+	],
 
-		notify_click_group: [
-			{ id: 1, label: "Go to favorites" },
-			{ id: 2, label: "Open all streams" },
-			{ id: 3, label: "Open all streams+chats" }
-		]
+	minimize: [
+		{ id: 0, label: "Do nothing" },
+		{ id: 1, label: "Minimize" },
+		{ id: 2, label: "Move to tray" }
+	],
 
-	});
+	notify_all: [
+		{ value: true,  label: "Show all except disabled ones" },
+		{ value: false, label: "Ignore all except enabled ones" }
+	],
+
+	notify_click: [
+		{ id: 0, label: "Do nothing" },
+		{ id: 1, label: "Go to favorites" },
+		{ id: 2, label: "Open stream" },
+		{ id: 3, label: "Open stream+chat" }
+	],
+
+	notify_click_group: [
+		{ id: 1, label: "Go to favorites" },
+		{ id: 2, label: "Open all streams" },
+		{ id: 3, label: "Open all streams+chats" }
+	]
 
 });

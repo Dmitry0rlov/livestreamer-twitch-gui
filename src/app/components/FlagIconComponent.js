@@ -1,43 +1,42 @@
-define( [ "Ember" ], function( Ember ) {
+import Ember from "Ember";
 
-	var get = Ember.get;
-	var alias = Ember.computed.alias;
+var get = Ember.get;
+var alias = Ember.computed.alias;
 
-	return Ember.Component.extend({
-		metadata: Ember.inject.service(),
 
-		tagName: "i",
-		classNameBindings: [ ":flag-icon", "flag" ],
-		attributeBindings: [ "title" ],
+export default Ember.Component.extend({
+	metadata: Ember.inject.service(),
 
-		lang: null,
-		type: null,
+	tagName: "i",
+	classNameBindings: [ ":flag-icon", "flag" ],
+	attributeBindings: [ "title" ],
 
-		codes: alias( "metadata.config.language_codes" ),
+	lang: null,
+	type: null,
 
-		flag: function() {
-			var codes = get( this, "codes" );
-			var lang  = get( this, "lang" );
+	codes: alias( "metadata.config.language_codes" ),
 
-			return codes[ lang ]
-				? "flag-icon-%@".fmt( codes[ lang ][ "flag" ] )
-				: null;
-		}.property( "lang" ),
+	flag: function() {
+		var codes = get( this, "codes" );
+		var lang  = get( this, "lang" );
 
-		title: function() {
-			var codes = get( this, "codes" );
-			var lang  = get( this, "lang" );
+		return codes[ lang ]
+			? "flag-icon-%@".fmt( codes[ lang ][ "flag" ] )
+			: null;
+	}.property( "lang" ),
 
-			if ( !codes[ lang ] ) { return; }
-			lang = codes[ lang ][ "lang" ];
+	title: function() {
+		var codes = get( this, "codes" );
+		var lang  = get( this, "lang" );
 
-			switch ( get( this, "type" ) ) {
-				case "channel":
-					return "This channel is %@".fmt( lang );
-				case "broadcaster":
-					return "The broadcaster's language is %@".fmt( lang );
-			}
-		}.property( "lang" )
-	});
+		if ( !codes[ lang ] ) { return; }
+		lang = codes[ lang ][ "lang" ];
 
+		switch ( get( this, "type" ) ) {
+			case "channel":
+				return "This channel is %@".fmt( lang );
+			case "broadcaster":
+				return "The broadcaster's language is %@".fmt( lang );
+		}
+	}.property( "lang" )
 });

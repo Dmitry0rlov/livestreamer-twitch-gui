@@ -1,30 +1,31 @@
-define( [ "store/TwitchSerializer" ], function( TwitchSerializer ) {
+import TwitchSerializer from "store/TwitchSerializer";
 
-	return TwitchSerializer.extend({
-		primaryKey: "id",
 
-		attrs: {
-			channel: { deserialize: "records" }
-		},
+export default TwitchSerializer.extend({
 
-		typeForRoot: function() {
-			return "twitchUserFollowsChannel";
-		},
+	primaryKey: "id",
 
-		normalizePayload: function( payload ) {
-			// expected payload
-			if ( payload.follows ) { return payload; }
-			// unexpected payload: normalize it! also don't forget to set a proper ID
-			if ( !payload.id ) { payload.id = payload.channel.name; }
-			return { follows: payload };
-		},
+	attrs: {
+		channel: { deserialize: "records" }
+	},
 
-		normalizeHash: {
-			follows: function( hash ) {
-				if ( !hash.id ) { hash.id = hash.channel.name; }
-				return hash;
-			}
+	typeForRoot: function() {
+		return "twitchUserFollowsChannel";
+	},
+
+	normalizePayload: function( payload ) {
+		// expected payload
+		if ( payload.follows ) { return payload; }
+		// unexpected payload: normalize it! also don't forget to set a proper ID
+		if ( !payload.id ) { payload.id = payload.channel.name; }
+		return { follows: payload };
+	},
+
+	normalizeHash: {
+		follows: function( hash ) {
+			if ( !hash.id ) { hash.id = hash.channel.name; }
+			return hash;
 		}
-	});
+	}
 
 });

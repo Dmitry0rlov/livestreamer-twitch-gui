@@ -1,5 +1,4 @@
-define( [ "Ember" ], function( Ember ) {
+import Ember from "Ember";
 
-	return Ember.ArrayController.extend();
 
-});
+export default Ember.ArrayController.extend();

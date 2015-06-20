@@ -1,19 +1,18 @@
-define( [ "nwjs/nwWindow" ], function( nwWindow ) {
+import nwWindow from "nwjs/nwWindow";
 
-	function removeAll() {
-		var Cookies = nwWindow.cookies;
-		Cookies.getAll( {}, function( cookies ) {
-			[].forEach.call( cookies, function( c ) {
-				Cookies.remove({
-					url: "http" + ( c.secure ? "s" : "" ) + "://" + c.domain + c.path,
-					name: c.name
-				});
+function removeAll() {
+	var Cookies = nwWindow.cookies;
+	Cookies.getAll( {}, function( cookies ) {
+		[].forEach.call( cookies, function( c ) {
+			Cookies.remove({
+				url: "http" + ( c.secure ? "s" : "" ) + "://" + c.domain + c.path,
+				name: c.name
 			});
 		});
-	}
+	});
+}
 
-	return {
-		removeAll: removeAll
-	};
 
-});
+export {
+	removeAll
+};

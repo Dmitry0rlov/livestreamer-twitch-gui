@@ -1,11 +1,14 @@
-define( [ "EmberData" ], function( DS ) {
+import DS from "EmberData";
 
-	var attr = DS.attr;
+var attr = DS.attr;
 
-	return DS.Model.extend({
-		checkagain: attr( "number" )
-	}).reopenClass({
-		toString: function() { return "Versioncheck"; }
-	});
+
+export default DS.Model.extend({
+
+	checkagain: attr( "number" )
+
+}).reopenClass({
+
+	toString: function() { return "Versioncheck"; }
 
 });

@@ -1,19 +1,16 @@
-define([
-	"Ember",
-	"text!root/metadata.json"
-], function( Ember, metadata ) {
+import Ember from "Ember";
+import metadata from "text!root/metadata.json";
 
-	var alias = Ember.computed.alias;
+var alias = Ember.computed.alias;
 
-	metadata = JSON.parse( metadata );
+var _metadata = JSON.parse( metadata );
 
-	return Ember.Service.extend({
-		metadata: metadata,
 
-		package     : alias( "metadata.package" ),
-		config      : alias( "metadata.package.config" ),
-		dependencies: alias( "metadata.dependencies" ),
-		contributors: alias( "metadata.contributors" )
-	});
+export default Ember.Service.extend({
+	"metadata"    : _metadata,
 
+	"package"     : alias( "metadata.package" ),
+	"config"      : alias( "metadata.package.config" ),
+	"dependencies": alias( "metadata.dependencies" ),
+	"contributors": alias( "metadata.contributors" )
 });

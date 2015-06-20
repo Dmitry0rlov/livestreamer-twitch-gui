@@ -1,26 +1,25 @@
-define( [ "Ember" ], function( Ember ) {
+import Ember from "Ember";
 
-	var get = Ember.get,
-	    set = Ember.set;
+var get = Ember.get,
+    set = Ember.set;
 
-	return Ember.Mixin.create({
-		/**
-		 * Retry a previously stored transition
-		 * @param {string?} route
-		 * @returns {Promise}
-		 */
-		retryTransition: function( route ) {
-			var transition = get( this, "previousTransition" );
 
-			if ( !transition ) {
-				return route
-					? this.transitionToRoute( route )
-					: Promise.resolve();
-			}
+export default Ember.Mixin.create({
+	/**
+	 * Retry a previously stored transition
+	 * @param {string?} route
+	 * @returns {Promise}
+	 */
+	retryTransition: function( route ) {
+		var transition = get( this, "previousTransition" );
 
-			set( this, "previousTransition", null );
-			return transition.retry();
+		if ( !transition ) {
+			return route
+				? this.transitionToRoute( route )
+				: Promise.resolve();
 		}
-	});
 
+		set( this, "previousTransition", null );
+		return transition.retry();
+	}
 });

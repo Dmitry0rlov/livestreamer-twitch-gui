@@ -1,14 +1,17 @@
-define( [ "EmberData" ], function( DS ) {
+import DS from "EmberData";
 
-	var attr = DS.attr;
-	var belongsTo = DS.belongsTo;
+var attr = DS.attr;
+var belongsTo = DS.belongsTo;
 
-	return DS.Model.extend({
-		channel: belongsTo( "twitchChannel" ),
-		created_at: attr( "date" ),
-		notifications: attr( "boolean" )
-	}).reopenClass({
-		toString: function() { return "kraken/users/:user/follows/channels"; }
-	});
+
+export default DS.Model.extend({
+
+	channel: belongsTo( "twitchChannel" ),
+	created_at: attr( "date" ),
+	notifications: attr( "boolean" )
+
+}).reopenClass({
+
+	toString: function() { return "kraken/users/:user/follows/channels"; }
 
 });

@@ -1,27 +1,26 @@
-define( [ "Ember" ], function( Ember ) {
+import Ember from "Ember";
 
-	var get = Ember.get;
-	var alias = Ember.computed.alias;
-	var equal = Ember.computed.equal;
+var get = Ember.get;
+var alias = Ember.computed.alias;
+var equal = Ember.computed.equal;
 
-	return Ember.Controller.extend({
-		needs: [ "application" ],
 
-		stream : alias( "model.stream" ),
-		channel: alias( "model.channel" ),
+export default Ember.Controller.extend({
+	needs: [ "application" ],
 
-		isSubrouteSettings: equal( "controllers.application.currentRouteName", "channel.settings" ),
+	stream : alias( "model.stream" ),
+	channel: alias( "model.channel" ),
 
-		actions: {
-			"toggleSettings": function() {
-				this.transitionToRoute(
-					get( this, "isSubrouteSettings" )
-						? "channel.index"
-						: "channel.settings",
-					get( this, "model.channel.id" )
-				);
-			}
+	isSubrouteSettings: equal( "controllers.application.currentRouteName", "channel.settings" ),
+
+	actions: {
+		"toggleSettings": function() {
+			this.transitionToRoute(
+				get( this, "isSubrouteSettings" )
+					? "channel.index"
+					: "channel.settings",
+				get( this, "model.channel.id" )
+			);
 		}
-	});
-
+	}
 });

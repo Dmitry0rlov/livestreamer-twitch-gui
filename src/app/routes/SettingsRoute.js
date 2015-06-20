@@ -1,31 +1,31 @@
-define( [ "Ember", "utils/ember/ObjectBuffer" ], function( Ember, ObjectBuffer ) {
+import Ember from "Ember";
+import ObjectBuffer from "utils/ember/ObjectBuffer";
 
-	var get = Ember.get;
+var get = Ember.get;
 
-	return Ember.Route.extend({
-		model: function() {
-			var settings = get( this, "settings" );
-			return ObjectBuffer.create({
-				content: settings
-			});
-		},
 
-		actions: {
-			willTransition: function( transition ) {
-				// if the user has changed any values
-				if ( get( this.controller, "model.hasBufferedChanges" ) ) {
-					// stay here...
-					transition.abort();
+export default Ember.Route.extend({
+	model: function() {
+		var settings = get( this, "settings" );
+		return ObjectBuffer.create({
+			content: settings
+		});
+	},
 
-					// and let the user decide
-					this.send( "openModal", "settingsModal", this.controller, {
-						modalHead: "Please confirm",
-						modalBody: "Do you want to apply your changes?",
-						previousTransition: transition
-					});
-				}
+	actions: {
+		willTransition: function( transition ) {
+			// if the user has changed any values
+			if ( get( this.controller, "model.hasBufferedChanges" ) ) {
+				// stay here...
+				transition.abort();
+
+				// and let the user decide
+				this.send( "openModal", "settingsModal", this.controller, {
+					modalHead: "Please confirm",
+					modalBody: "Do you want to apply your changes?",
+					previousTransition: transition
+				});
 			}
 		}
-	});
-
+	}
 });
